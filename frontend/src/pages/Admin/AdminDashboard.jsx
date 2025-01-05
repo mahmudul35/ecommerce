@@ -1,26 +1,26 @@
+import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
-import { useGetUsersQuery } from "../../redux/api/usersApiSlice";
+import Loader from "../../components/Loader";
 import {
   useGetTotalOrdersQuery,
   useGetTotalSalesByDateQuery,
   useGetTotalSalesQuery,
 } from "../../redux/api/orderApiSlice";
-
-import { useState, useEffect } from "react";
+import { useGetUsersQuery } from "../../redux/api/usersApiSlice";
 import AdminMenu from "./AdminMenu";
 import OrderList from "./OrderList";
-import Loader from "../../components/Loader";
 
 const AdminDashboard = () => {
-  const { data: sales, isLoading } = useGetTotalSalesQuery();
-  const { data: customers, isLoading: loading } = useGetUsersQuery();
-  const { data: orders, isLoading: loadingTwo } = useGetTotalOrdersQuery();
-  const { data: salesDetail } = useGetTotalSalesByDateQuery();
+  const { data: sales, isLoading: salesLoading } = useGetTotalSalesQuery();
+  const { data: customers, isLoading: customersLoading } = useGetUsersQuery();
+  const { data: orders, isLoading: ordersLoading } = useGetTotalOrdersQuery();
+  const { data: salesDetail, isLoading: salesDetailLoading } =
+    useGetTotalSalesByDateQuery();
 
   const [state, setState] = useState({
     options: {
       chart: {
-        type: "line",
+        type: "line", // 'line' chart for sales trend
       },
       tooltip: {
         theme: "dark",
@@ -40,10 +40,10 @@ const AdminDashboard = () => {
         borderColor: "#ccc",
       },
       markers: {
-        size: 1,
+        size: 4,
       },
       xaxis: {
-        categories: [],
+        categories: [], // Will be filled with sales data
         title: {
           text: "Date",
         },
@@ -54,30 +54,25 @@ const AdminDashboard = () => {
         },
         min: 0,
       },
-      legend: {
-        position: "top",
-        horizontalAlign: "right",
-        floating: true,
-        offsetY: -25,
-        offsetX: -5,
-      },
     },
     series: [{ name: "Sales", data: [] }],
   });
 
   useEffect(() => {
     if (salesDetail) {
+      // Using static data first for testing
       const formattedSalesDate = salesDetail.map((item) => ({
-        x: item._id,
-        y: item.totalSales,
+        x: item._id, // Date (or category)
+        y: item.totalSales, // Sales value
       }));
 
+      // Update chart state with formatted data
       setState((prevState) => ({
         ...prevState,
         options: {
           ...prevState.options,
           xaxis: {
-            categories: formattedSalesDate.map((item) => item.x),
+            categories: formattedSalesDate.map((item) => item.x), // Dates on X-axis
           },
         },
 
@@ -89,57 +84,62 @@ const AdminDashboard = () => {
   }, [salesDetail]);
 
   return (
-    <>
+    <div className="mt-20">
       <AdminMenu />
 
-      <section className="xl:ml-[4rem] md:ml-[0rem]">
-        <div className="w-[80%] flex justify-around flex-wrap">
-          <div className="rounded-lg bg-black p-5 w-[20rem] mt-5">
-            <div className="font-bold rounded-full w-[3rem] bg-pink-500 text-center p-3">
+      <section className="xl:ml-[4rem] md:ml-[0rem] p-6 bg-gray-100">
+        {/* Stats Section */}
+        <div className="w-full flex justify-around flex-wrap gap-6">
+          {/* Sales Card */}
+          <div className="rounded-lg bg-gradient-to-r from-pink-600 to-pink-400 p-6 w-[20rem] mt-5 shadow-lg">
+            <div className="font-bold rounded-full w-[3rem] bg-white text-center p-3">
               $
             </div>
-
-            <p className="mt-5">Sales</p>
-            <h1 className="text-xl font-bold">
-              $ {isLoading ? <Loader /> : sales.totalSales.toFixed(2)}
+            <p className="mt-5 text-white">Sales</p>
+            <h1 className="text-3xl font-bold text-white">
+              {salesLoading ? <Loader /> : `$${sales?.totalSales.toFixed(2)}`}
             </h1>
           </div>
-          <div className="rounded-lg bg-black p-5 w-[20rem] mt-5">
-            <div className="font-bold rounded-full w-[3rem] bg-pink-500 text-center p-3">
-              $
-            </div>
 
-            <p className="mt-5">Customers</p>
-            <h1 className="text-xl font-bold">
-              $ {isLoading ? <Loader /> : customers?.length}
+          {/* Customers Card */}
+          <div className="rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 p-6 w-[20rem] mt-5 shadow-lg">
+            <div className="font-bold rounded-full w-[3rem] bg-white text-center p-3">
+              👥
+            </div>
+            <p className="mt-5 text-white">Customers</p>
+            <h1 className="text-3xl font-bold text-white">
+              {customersLoading ? <Loader /> : customers?.length}
             </h1>
           </div>
-          <div className="rounded-lg bg-black p-5 w-[20rem] mt-5">
-            <div className="font-bold rounded-full w-[3rem] bg-pink-500 text-center p-3">
-              $
-            </div>
 
-            <p className="mt-5">All Orders</p>
-            <h1 className="text-xl font-bold">
-              $ {isLoading ? <Loader /> : orders?.totalOrders}
+          {/* Orders Card */}
+          <div className="rounded-lg bg-gradient-to-r from-green-600 to-green-400 p-6 w-[20rem] mt-5 shadow-lg">
+            <div className="font-bold rounded-full w-[3rem] bg-white text-center p-3">
+              📦
+            </div>
+            <p className="mt-5 text-white">Orders</p>
+            <h1 className="text-3xl font-bold text-white">
+              {ordersLoading ? <Loader /> : orders?.totalOrders}
             </h1>
           </div>
         </div>
 
-        <div className="ml-[10rem] mt-[4rem]">
+        {/* Sales Trend Chart */}
+        <div className="mt-12 flex justify-center">
           <Chart
             options={state.options}
             series={state.series}
-            type="bar"
-            width="70%"
+            type="line"
+            width="80%"
           />
         </div>
 
-        <div className="mt-[4rem]">
+        {/* Order List Section */}
+        <div className="mt-12">
           <OrderList />
         </div>
       </section>
-    </>
+    </div>
   );
 };
 

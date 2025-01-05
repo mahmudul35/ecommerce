@@ -137,6 +137,31 @@ const Navigation = () => {
                           Products
                         </Link>
                       </li>
+
+                      <li>
+                        <Link
+                          className="list-item py-2 px-3 block mb-5  rounded-sm"
+                          to="/admin/allproductslist"
+                        >
+                          All Products
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          className="list-item py-2 px-3 block mb-5  rounded-sm"
+                          to="/admin/userlist"
+                        >
+                          Manage Users
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          className="list-item py-2 px-3 block mb-5 rounded-sm"
+                          to="/admin/orderlist"
+                        >
+                          Manage Orders
+                        </Link>
+                      </li>
                     </>
                   )}
                   <li>

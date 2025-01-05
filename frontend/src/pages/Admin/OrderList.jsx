@@ -1,6 +1,6 @@
-import Message from "../../components/Message";
-import Loader from "../../components/Loader";
 import { Link } from "react-router-dom";
+import Loader from "../../components/Loader";
+import Message from "../../components/Message";
 import { useGetOrdersQuery } from "../../redux/api/orderApiSlice";
 import AdminMenu from "./AdminMenu";
 
@@ -8,7 +8,8 @@ const OrderList = () => {
   const { data: orders, isLoading, error } = useGetOrdersQuery();
 
   return (
-    <>
+    <div className="container mx-auto mt-20">
+      <h2 className="text-2xl font-bold text-center my-7">All Order</h2>
       {isLoading ? (
         <Loader />
       ) : error ? (
@@ -86,7 +87,7 @@ const OrderList = () => {
           </tbody>
         </table>
       )}
-    </>
+    </div>
   );
 };
 

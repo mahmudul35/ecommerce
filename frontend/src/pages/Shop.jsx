@@ -166,7 +166,7 @@ const Shop = () => {
             <h2 className="h4 text-center mb-2 font-bold text-pink-700">
               All Products
             </h2>
-            <div className="flex flex-wrap">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {products.length === 0 ? (
                 <Loader />
               ) : (
