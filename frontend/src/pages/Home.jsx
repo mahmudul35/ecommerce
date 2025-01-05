@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import Recent from "../components/Recent";
+import WhyChooseUs from "../components/WhyChoose";
 import { useGetProductsQuery } from "../redux/api/productApiSlice";
 import Product from "./Products/Product";
 
@@ -55,6 +56,7 @@ const Home = () => {
               </Link>
             </div>
           </div>
+          <WhyChooseUs />
           <Footer />
         </>
       )}

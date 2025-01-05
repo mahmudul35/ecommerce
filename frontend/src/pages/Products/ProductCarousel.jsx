@@ -16,24 +16,48 @@ const ProductCarousel = () => {
   const { data: products, isLoading, error } = useGetTopProductsQuery();
 
   const settings = {
-    dots: false,
+    dots: true,
     infinite: true,
-    speed: 500,
+    speed: 600,
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: true,
     autoplay: true,
     autoplaySpeed: 3000,
+    appendDots: (dots) => (
+      <div
+        style={{
+          position: "absolute",
+          bottom: "10px",
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
+        <ul style={{ margin: 0 }}>{dots}</ul>
+      </div>
+    ),
+    customPaging: (i) => (
+      <div
+        style={{
+          width: "12px",
+          height: "12px",
+          border: "2px solid #FF1493",
+          borderRadius: "50%",
+          backgroundColor: "transparent",
+        }}
+      ></div>
+    ),
   };
 
   return (
-    <div className="mb-4 lg:block  xl:block bg-slate-700 text-white px-2 md:block">
+    <div className="mb-8 bg-white shadow-lg rounded-lg p-4 relative">
       {isLoading ? null : error ? (
         <Message variant="danger">
           {error?.data?.message || error.error}
         </Message>
       ) : (
-        <Slider {...settings} className="w-full">
+        <Slider {...settings}>
           {products.map(
             ({
               image,
@@ -48,50 +72,55 @@ const ProductCarousel = () => {
               quantity,
               countInStock,
             }) => (
-              <div key={_id}>
-                <img
-                  src={image}
-                  alt={name}
-                  className="w-full rounded-lg  h-[30rem]"
-                />
-
-                <div className="mt-4 flex justify-between">
-                  <div className="one">
-                    <h2>{name}</h2>
-                    <p> $ {price}</p> <br /> <br />
-                    <p className="w-[25rem]">
-                      {description.substring(0, 170)} ...
-                    </p>
+              <div key={_id} className="p-4">
+                {/* Gradient Background for Image */}
+                <div className="relative h-[20rem] md:h-[25rem] bg-gradient-to-r from-pink-100 to-pink-200 flex items-center justify-center rounded-lg shadow-md">
+                  <img
+                    src={image}
+                    alt={name}
+                    className="w-auto h-full object-contain rounded-lg"
+                  />
+                </div>
+                <div className="mt-6 space-y-4">
+                  <div className="text-center">
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      {name}
+                    </h2>
+                    <p className="text-pink-600 text-xl font-bold">${price}</p>
                   </div>
+                  <p className="text-gray-600 text-sm line-clamp-3">
+                    {description.substring(0, 150)}...
+                  </p>
 
-                  <div className="flex justify-between w-[20rem]">
-                    <div className="one">
-                      <h1 className="flex items-center mb-6">
-                        <FaStore className="mr-2 text-white" /> Brand: {brand}
-                      </h1>
-                      <h1 className="flex items-center mb-6">
-                        <FaClock className="mr-2 text-white" /> Added:{" "}
-                        {moment(createdAt).fromNow()}
-                      </h1>
-                      <h1 className="flex items-center mb-6">
-                        <FaStar className="mr-2 text-white" /> Reviews:
-                        {numReviews}
-                      </h1>
+                  <div className="flex flex-wrap justify-between mt-6 text-sm text-gray-700">
+                    <div className="flex flex-col items-start space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <FaStore className="text-pink-600" />
+                        <span>Brand: {brand}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FaClock className="text-pink-600" />
+                        <span>Added: {moment(createdAt).fromNow()}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FaStar className="text-pink-600" />
+                        <span>Reviews: {numReviews}</span>
+                      </div>
                     </div>
 
-                    <div className="two">
-                      <h1 className="flex items-center mb-6">
-                        <FaStar className="mr-2 text-white" /> Ratings:{" "}
-                        {Math.round(rating)}
-                      </h1>
-                      <h1 className="flex items-center mb-6">
-                        <FaShoppingCart className="mr-2 text-white" /> Quantity:{" "}
-                        {quantity}
-                      </h1>
-                      <h1 className="flex items-center mb-6">
-                        <FaBox className="mr-2 text-white" /> In Stock:{" "}
-                        {countInStock}
-                      </h1>
+                    <div className="flex flex-col items-start space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <FaStar className="text-pink-600" />
+                        <span>Ratings: {Math.round(rating)}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FaShoppingCart className="text-pink-600" />
+                        <span>Quantity: {quantity}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FaBox className="text-pink-600" />
+                        <span>In Stock: {countInStock}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
